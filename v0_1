@@ -1,0 +1,107 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <iostream>
+#include <cstddef>
+#include <utility>
+#include<thread>
+
+
+const int max_elem=1000000;
+       int mas[max_elem];
+       int somevalue =0;
+
+       void bubble_sort(int a[], int length) {
+            for (int j = 0; j < length-1; j++) {
+                for (int i = 0; i < length-j-1; i++) {
+                    if (a[i] > a[i+1]) {
+                        int b = a[i]; //change for elements
+                        a[i] = a[i+1];
+                        a[i+1] = b;
+                    }
+                }
+            }
+        }
+
+
+       void shaker_sort(int array[], int size)
+       {
+           for (int left_idx = 0, right_idx = size - 1;
+                left_idx < right_idx;)
+           {
+               for (int idx = left_idx; idx < right_idx; idx++)
+               {
+                   if (array[idx + 1] < array[idx])
+                   {
+                       std::swap(array[idx], array[idx + 1]);
+                   }
+               }
+               right_idx--;
+
+               for (int idx = right_idx; idx > left_idx; idx--)
+               {
+                   if (array[idx - 1] >  array[idx])
+                   {
+                       std::swap(array[idx - 1], array[idx]);
+                   }
+               }
+               left_idx++;
+           }
+       }
+
+       void generatemas(int array[], int size)
+       {
+         for(int i=0;i<size;i++)
+           {
+                   array[i]=rand()%90000;
+                   somevalue++;
+                   std::cout<< somevalue << std::endl;
+           }
+
+       }
+
+
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_action_triggered()
+{
+    close();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+     std::thread thr (generatemas, std::ref(mas), max_elem);
+         thr.join();
+         ui->pushButton_2->setEnabled(1);
+}
+
+void outputmas(int array[],int max_elem)
+{
+    for(int i=0;i<max_elem;i++)
+    {
+          std::cout<<array[i]<<std::endl;
+    }
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+   std::thread thr1 (shaker_sort, std::ref(mas), max_elem);
+         thr1.join();
+
+   std::thread thr2 (outputmas, std::ref(mas), max_elem);
+         thr2.detach();
+
+}
+
